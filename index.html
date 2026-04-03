@@ -649,9 +649,18 @@ async function submitCash() {
 
 // ─── JOB QUICK SELECT ─────────────────────────────────────
 function selectJob(btn, label) {
-  document.querySelectorAll('#quickJobs .quick-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  document.getElementById('iDesc').value = label;
+  btn.classList.toggle('selected');
+  // Build description from all selected buttons
+  const selected = [];
+  document.querySelectorAll('#quickJobs .quick-btn.selected').forEach(b => selected.push(b.textContent.trim()));
+  // Keep any manually typed extra text after the auto-generated part
+  const current = document.getElementById('iDesc').value;
+  const autoText = selected.join(', ');
+  document.getElementById('iDesc').value = autoText;
+  // Focus at end so user can add more
+  const input = document.getElementById('iDesc');
+  input.focus();
+  input.setSelectionRange(input.value.length, input.value.length);
 }
 
 // ─── HELPERS ──────────────────────────────────────────────
