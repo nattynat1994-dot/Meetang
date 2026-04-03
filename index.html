@@ -43,6 +43,19 @@ body {
   padding-bottom: env(safe-area-inset-bottom, 24px);
 }
 
+
+/* ─── QUICK SELECT ────────────────────────────────────── */
+.quick-select { display: flex; flex-wrap: wrap; gap: 8px; }
+.quick-btn {
+  padding: 7px 12px; border-radius: 999px;
+  border: 1.5px solid var(--border2); background: var(--bg);
+  color: var(--text); font-size: 13px; font-family: var(--sans);
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.quick-btn:active { transform: scale(.95); }
+.quick-btn.selected { background: var(--pink); color: #fff; border-color: var(--pink); }
+
 /* ─── PIN ─────────────────────────────────────────────── */
 #pinScreen {
   position: fixed; inset: 0; z-index: 9999;
@@ -323,8 +336,20 @@ body {
         </select>
       </div>
       <div class="field">
-        <label>รายละเอียด</label>
-        <input type="text" id="iDesc" placeholder="เช่น ซ่อมกางเกง ปรับเอว">
+        <label>ประเภทงาน</label>
+        <div class="quick-select" id="quickJobs">
+          <button class="quick-btn" onclick="selectJob(this,'ปะผ้า')">ปะผ้า</button>
+          <button class="quick-btn" onclick="selectJob(this,'เปลี่ยนซิป')">เปลี่ยนซิป</button>
+          <button class="quick-btn" onclick="selectJob(this,'ตัดต่อขากางเกง')">ตัดต่อขากางเกง</button>
+          <button class="quick-btn" onclick="selectJob(this,'แก้ทรง')">แก้ทรง</button>
+          <button class="quick-btn" onclick="selectJob(this,'เปลี่ยนยางยืด')">เปลี่ยนยางยืด</button>
+          <button class="quick-btn" onclick="selectJob(this,'เปลี่ยนกระดุม')">เปลี่ยนกระดุม</button>
+          <button class="quick-btn" onclick="selectJob(this,'ซ่อมกระเป๋า')">ซ่อมกระเป๋า</button>
+          <button class="quick-btn" onclick="selectJob(this,'งานเย็บทั่วไป')">งานเย็บทั่วไป</button>
+          <button class="quick-btn" onclick="selectJob(this,'สร้างแพทเทิร์นเย็บใหม่')">สร้างแพทเทิร์นเย็บใหม่</button>
+          <button class="quick-btn" onclick="selectJob(this,'อื่นๆ')">อื่นๆ</button>
+        </div>
+        <input type="text" id="iDesc" placeholder="เลือกจากด้านบน หรือพิมพ์เอง" style="margin-top:8px;">
       </div>
       <div class="field">
         <label>จำนวนเงิน (บาท)</label>
@@ -364,7 +389,7 @@ body {
         <label>หมวดหมู่</label>
         <select id="eCategory">
           <option value="">-- เลือก --</option>
-          <option>อุปกรณ์</option>
+          <option>อุปกรณ์เย็บผ้า</option>
           <option>ค่าไฟ</option>
           <option>ค่าขนส่ง</option>
           <option>ค่าบรรจุภัณฑ์</option>
@@ -409,8 +434,8 @@ body {
       <div class="field">
         <label>ประเภท</label>
         <div class="toggle-row">
-          <button class="toggle-btn active-in" id="btnCashIn" onclick="setCashType('in')">💚 รับเงินสด</button>
-          <button class="toggle-btn" id="btnCashOut" onclick="setCashType('out')">🔴 ฝากธนาคาร</button>
+          <button class="toggle-btn active-in" id="btnCashIn" onclick="setCashType('in')">💚 รับเงินสดจากลูกค้า</button>
+          <button class="toggle-btn" id="btnCashOut" onclick="setCashType('out')">🔴 ฝากเงินสดเข้าธนาคาร</button>
         </div>
       </div>
       <div class="field">
@@ -550,11 +575,11 @@ function setCashType(t) {
   if(t==='in') {
     btnIn.className='toggle-btn active-in';
     btnOut.className='toggle-btn';
-    document.getElementById('cDesc').placeholder='เช่น รับเงินสดจากลูกค้า';
+    document.getElementById('cDesc').placeholder='เช่น รับเงินสดค่าซ่อมกางเกง';
   } else {
     btnIn.className='toggle-btn';
     btnOut.className='toggle-btn active-out';
-    document.getElementById('cDesc').placeholder='เช่น ฝากเงินสด CDM';
+    document.getElementById('cDesc').placeholder='เช่น ฝากเงินสดเข้าธนาคาร CDM';
   }
 }
 
@@ -620,6 +645,13 @@ async function submitCash() {
     else toast('เกิดข้อผิดพลาด: '+(r?.error||'ไม่ทราบสาเหตุ'),'fail');
   } catch(e) { toast('ไม่สามารถเชื่อมต่อได้','fail'); }
   setSpin('spinC', false);
+}
+
+// ─── JOB QUICK SELECT ─────────────────────────────────────
+function selectJob(btn, label) {
+  document.querySelectorAll('#quickJobs .quick-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('iDesc').value = label;
 }
 
 // ─── HELPERS ──────────────────────────────────────────────
